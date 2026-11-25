@@ -1,0 +1,38 @@
+# Evennia: our own text-based multiplayer RPG (a MUD).
+#   http://mud.local       website and browser client
+#   mud.local port 4000    classic MUD clients (telnet)
+# The game's code and database are in ./data/mymud.
+services:
+  mud:
+    build: .
+    container_name: mud
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+      - DOMAIN=${DOMAIN}
+    # The admin account, used on the first start only (see README).
+    env_file:
+      - path: secrets.env
+        required: false
+    volumes:
+      - ./data:/data
+    # Not through Traefik (home network only, never forward on the router):
+    # 4000 is telnet, 4002 is the websocket the browser client connects to.
+    ports:
+      - "4000:4000"
+      - "4002:4002"
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mud.rule=Host(`mud.${DOMAIN}`) || Host(`mud.local`)
+      - traefik.http.services.mud.loadbalancer.server.port=4001
+      - homepage.group=Apps
+      - homepage.name=MUD
+      - homepage.icon=mdi-sword-cross
+      - homepage.href=http://mud.local
+      - homepage.description=Our text RPG (telnet mud.local 4000)
+
+networks:
+  proxy:
+    external: true

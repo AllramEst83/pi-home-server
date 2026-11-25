@@ -10,3 +10,5 @@ include:
   - postgres/compose.yml
   - adminer/compose.yml
   - files/compose.yml
+  - retroarch/compose.yml
+  - mud/compose.yml

@@ -10,6 +10,8 @@ the home network (192.168.0.0/24) in.
 | Homepage (start page) | http://home.local | http://home.192-168-0-43.sslip.io |
 | Adminer (databases) | http://adminer.local | http://adminer.192-168-0-43.sslip.io |
 | File Browser (home folder) | http://files.local | http://files.192-168-0-43.sslip.io |
+| RetroArch (games) | http://retroarch.local | http://retroarch.192-168-0-43.sslip.io |
+| MUD (Evennia) | http://mud.local | http://mud.192-168-0-43.sslip.io |
 | Glances | http://glances.local | http://glances.192-168-0-43.sslip.io |
 | Traefik dashboard | http://traefik.local | http://traefik.192-168-0-43.sslip.io |
 
@@ -127,6 +129,38 @@ Traefik picks the new container up by its labels.
   `docker logs files 2>&1 | grep -i password`. Change it straight away
   (Settings > Profile).
 - Careful with `~/stacks/*/data`: deleting there deletes app data.
+
+## RetroArch (games)
+
+- http://retroarch.local runs the RetroArch emulator in the browser. The
+  game runs on the device you play on, not on the Pi.
+- Nothing is stored on the Pi. Games you load and your saves stay in that
+  browser, so clearing the browser's data deletes them.
+- Load a game: click **Add content** in the top bar and pick a ROM file on
+  your device. Then use Load Core and Load Content in the menu. Only use
+  games you are allowed to use.
+
+## MUD (Evennia)
+
+Our own text-based multiplayer RPG.
+
+- Play in the browser at http://mud.local, or with a MUD client: host
+  `mud.local`, port `4000`.
+- Besides port 80, it opens ports 4000 (telnet) and 4002 (the browser
+  client's live connection). Home network only.
+- Before the first start, make the admin account (once, on the Pi):
+  ```bash
+  cd ~/stacks/mud
+  (umask 077; printf 'EVENNIA_SUPERUSER_USERNAME=admin
+EVENNIA_SUPERUSER_PASSWORD=%s
+' "$(openssl rand -hex 12)" > secrets.env)
+  cat secrets.env
+  ```
+- Start: `cd ~/stacks && docker compose up -d --build`
+- The game is in `~/stacks/mud/data/mymud` (code in `world/`, `typeclasses/`
+  and `commands/`). The files belong to root, so edit them with `sudo`.
+  After a change: `docker compose restart mud`.
+- Backup: the `mud/data` folder.
 
 ## Everyday commands (in ~/stacks)
 

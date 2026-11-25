@@ -1,0 +1,25 @@
+# RetroArch Web: the RetroArch emulator, running in the browser. The Pi only
+# serves the files; the game runs on the device you play on. Keeps no data
+# on the Pi: games you load and your saves stay in that browser.
+services:
+  retroarch:
+    image: inglebard/retroarch-web:latest
+    container_name: retroarch
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.retroarch.rule=Host(`retroarch.${DOMAIN}`) || Host(`retroarch.local`)
+      - traefik.http.services.retroarch.loadbalancer.server.port=80
+      - homepage.group=Apps
+      - homepage.name=RetroArch
+      - homepage.icon=retroarch.png
+      - homepage.href=http://retroarch.local
+      - homepage.description=Retro game emulator in the browser
+
+networks:
+  proxy:
+    external: true
