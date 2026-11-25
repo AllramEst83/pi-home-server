@@ -1,0 +1,9 @@
+# Passwords: made on the Pi, never committed.
+secrets.env
+
+# App data lives on the Pi only (back it up there).
+*/data/
+*/workspace/
+*/database/
+files/config/
+freshrss/extensions/

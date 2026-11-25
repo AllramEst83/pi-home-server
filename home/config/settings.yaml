@@ -12,6 +12,9 @@ layout:
   Tools:
     style: row
     columns: 3
+  Data:
+    style: row
+    columns: 3
   Monitoring:
     style: row
     columns: 3

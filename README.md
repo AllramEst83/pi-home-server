@@ -8,6 +8,8 @@ the home network (192.168.0.0/24) in.
 | App | Short name | Always works |
 |---|---|---|
 | Homepage (start page) | http://home.local | http://home.192-168-0-43.sslip.io |
+| Adminer (databases) | http://adminer.local | http://adminer.192-168-0-43.sslip.io |
+| File Browser (home folder) | http://files.local | http://files.192-168-0-43.sslip.io |
 | Glances | http://glances.local | http://glances.192-168-0-43.sslip.io |
 | Traefik dashboard | http://traefik.local | http://traefik.192-168-0-43.sslip.io |
 
@@ -100,6 +102,31 @@ On the Pi (`ssh allramest@192.168.0.43`):
 
 Nothing else is needed: no DNS entry, no router change, no Traefik restart.
 Traefik picks the new container up by its labels.
+
+## Database (PostgreSQL + Adminer)
+
+- Server: `postgres.local`, port `5432`, user `postgres`. Other containers
+  use host `postgres`. Open to the home network only.
+- Password: on the Pi, `cat ~/stacks/postgres/secrets.env`. It was made once
+  with `echo "POSTGRES_PASSWORD=$(openssl rand -hex 16)" > secrets.env`
+  (file mode 600) and is never committed (`.gitignore`).
+- Adminer, the web manager: http://adminer.local. Pick System
+  **PostgreSQL**, Server `postgres`, user `postgres`, then the password.
+- From the PC: DBeaver or VS Code (PostgreSQL extension), using the same
+  details with host `postgres.local`.
+- A database for a new app: in Adminer, "Create database", or
+  `docker exec -it postgres createdb -U postgres myapp`.
+- Backup: `docker exec postgres pg_dumpall -U postgres > backup.sql`.
+- PostgreSQL stays on version 17. Moving to 18 needs a dump and restore.
+
+## File Browser
+
+- http://files.local shows `/home/allramest` (read and write), which
+  includes `~/stacks` and every app's data. It runs as your user.
+- First login: user `admin`. The password is printed once in the log:
+  `docker logs files 2>&1 | grep -i password`. Change it straight away
+  (Settings > Profile).
+- Careful with `~/stacks/*/data`: deleting there deletes app data.
 
 ## Everyday commands (in ~/stacks)
 

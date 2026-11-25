@@ -7,3 +7,6 @@ include:
   - mealie/compose.yml
   - freshrss/compose.yml
   - it-tools/compose.yml
+  - postgres/compose.yml
+  - adminer/compose.yml
+  - files/compose.yml

@@ -1,0 +1,32 @@
+# File Browser: browse, upload, download and edit your home folder on the Pi
+# at http://files.local. It sees /home/allramest only (read and write) and
+# runs as your user, so new files are yours.
+# First login: user "admin", password printed once in the log:
+#   docker logs files 2>&1 | grep -i password
+services:
+  files:
+    image: filebrowser/filebrowser:latest
+    container_name: files
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      - TZ=Europe/Stockholm
+    volumes:
+      - /home/allramest:/srv
+      - ./database:/database
+      - ./config:/config
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.files.rule=Host(`files.${DOMAIN}`) || Host(`files.local`)
+      - traefik.http.services.files.loadbalancer.server.port=80
+      - homepage.group=Tools
+      - homepage.name=Files
+      - homepage.icon=filebrowser.png
+      - homepage.href=http://files.local
+      - homepage.description=Browse the Pi's home folder
+
+networks:
+  proxy:
+    external: true
