@@ -1,0 +1,9 @@
+# One stack for everything on the Pi. Each app lives in its own folder;
+# list it here and run `docker compose up -d` in ~/stacks.
+include:
+  - traefik/compose.yml
+  - glances/compose.yml
+  - home/compose.yml
+  - mealie/compose.yml
+  - freshrss/compose.yml
+  - it-tools/compose.yml

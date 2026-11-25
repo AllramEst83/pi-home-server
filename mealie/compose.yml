@@ -1,0 +1,30 @@
+# Mealie: recipes (import from a URL), meal plans and shopping lists.
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: mealie
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+      - PUID=1000
+      - PGID=1000
+      - BASE_URL=http://mealie.local
+      # Accounts are made by the admin (Settings > Users), not by sign-up.
+      - ALLOW_SIGNUP=false
+    volumes:
+      - ./data:/app/data
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`mealie.${DOMAIN}`) || Host(`mealie.local`)
+      - traefik.http.services.mealie.loadbalancer.server.port=9000
+      - homepage.group=Apps
+      - homepage.name=Mealie
+      - homepage.icon=mealie.png
+      - homepage.href=http://mealie.local
+      - homepage.description=Recipes, meal plans, shopping lists
+
+networks:
+  proxy:
+    external: true

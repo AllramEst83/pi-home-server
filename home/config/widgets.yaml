@@ -1,0 +1,15 @@
+# The bar at the top: the Pi's health from Glances, and the time.
+- glances:
+    url: http://glances:61208
+    version: 4
+    cpu: true
+    mem: true
+    cputemp: true
+    uptime: true
+    disk: /
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: long
+      hour12: false

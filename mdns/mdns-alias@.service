@@ -1,0 +1,13 @@
+[Unit]
+Description=mDNS name %i.local for this Pi
+After=avahi-daemon.service network-online.target
+Wants=network-online.target
+Requires=avahi-daemon.service
+
+[Service]
+ExecStart=/usr/local/bin/mdns-alias %i
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

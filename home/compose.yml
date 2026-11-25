@@ -1,0 +1,25 @@
+# Homepage: the start page at http://home.local. Every container with
+# homepage.* labels shows up on it by itself (see _template).
+services:
+  home:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: home
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+      # Homepage refuses other host names.
+      - HOMEPAGE_ALLOWED_HOSTS=home.local,home.${DOMAIN}
+    volumes:
+      - ./config:/app/config
+      # Read-only: finds apps by their labels and shows if they're running.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.home.rule=Host(`home.${DOMAIN}`) || Host(`home.local`)
+      - traefik.http.services.home.loadbalancer.server.port=3000
+
+networks:
+  proxy:
+    external: true

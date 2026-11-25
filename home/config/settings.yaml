@@ -1,0 +1,20 @@
+title: Home server
+theme: dark
+color: slate
+headerStyle: clean
+hideVersion: true
+statusStyle: dot
+# Groups in this order; apps from other groups follow.
+layout:
+  Apps:
+    style: row
+    columns: 3
+  Tools:
+    style: row
+    columns: 3
+  Monitoring:
+    style: row
+    columns: 3
+  Network:
+    style: row
+    columns: 3

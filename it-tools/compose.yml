@@ -1,0 +1,22 @@
+# IT-Tools: handy developer tools in the browser (JSON, base64, hashes, UUIDs,
+# QR codes...). Keeps no data.
+services:
+  it-tools:
+    image: corentinth/it-tools:latest
+    container_name: it-tools
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.it-tools.rule=Host(`it-tools.${DOMAIN}`) || Host(`it-tools.local`)
+      - traefik.http.services.it-tools.loadbalancer.server.port=80
+      - homepage.group=Tools
+      - homepage.name=IT-Tools
+      - homepage.icon=it-tools.png
+      - homepage.href=http://it-tools.local
+      - homepage.description=JSON, base64, hashes, UUIDs, QR codes
+
+networks:
+  proxy:
+    external: true

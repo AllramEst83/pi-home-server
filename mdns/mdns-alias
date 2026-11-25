@@ -1,0 +1,33 @@
+#!/bin/sh
+# Announces <name>.local on the home network (mDNS, via Avahi), pointing at
+# this Pi's current IPv4 address. If the address changes (Ethernet -> Wi-Fi),
+# the name is announced again with the new one.
+# Used by mdns-alias@<name>.service; installed as /usr/local/bin/mdns-alias.
+set -u
+[ -n "${1:-}" ] || { echo "usage: mdns-alias <name>" >&2; exit 2; }
+name="$1.local"
+
+current() {
+  ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p'
+}
+
+pid=""
+trap '[ -n "$pid" ] && kill "$pid" 2>/dev/null; exit 0' TERM INT
+
+while :; do
+  ip=$(current)
+  if [ -z "$ip" ]; then
+    sleep 10
+    continue
+  fi
+  echo "announcing $name -> $ip"
+  avahi-publish -a -R "$name" "$ip" &
+  pid=$!
+  while kill -0 "$pid" 2>/dev/null && [ "$(current)" = "$ip" ]; do
+    sleep 30
+  done
+  kill "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null
+  pid=""
+  sleep 2
+done

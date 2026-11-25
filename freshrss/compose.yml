@@ -1,0 +1,29 @@
+# FreshRSS: your own RSS reader. Feeds are fetched at :03 and :33 every hour.
+services:
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+      - CRON_MIN=3,33
+      # Requests come through Traefik on the Docker network.
+      - TRUSTED_PROXY=172.16.0.0/12
+    volumes:
+      - ./data:/var/www/FreshRSS/data
+      - ./extensions:/var/www/FreshRSS/extensions
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.freshrss.rule=Host(`freshrss.${DOMAIN}`) || Host(`freshrss.local`)
+      - traefik.http.services.freshrss.loadbalancer.server.port=80
+      - homepage.group=Apps
+      - homepage.name=FreshRSS
+      - homepage.icon=freshrss.png
+      - homepage.href=http://freshrss.local
+      - homepage.description=News and blogs (RSS)
+
+networks:
+  proxy:
+    external: true

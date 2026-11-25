@@ -1,0 +1,30 @@
+# Copy this folder for a new app: cp -r _template <app>
+# Then replace APPNAME, IMAGE and PORT (the port the app listens on INSIDE
+# the container; see the image's docs). No "ports:" section: Traefik is the
+# only way in.
+services:
+  APPNAME:
+    image: IMAGE
+    container_name: APPNAME
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Stockholm
+    volumes:
+      # App data lives next to this file, so the folder is the backup.
+      - ./data:/data
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.APPNAME.rule=Host(`APPNAME.${DOMAIN}`) || Host(`APPNAME.local`)
+      - traefik.http.services.APPNAME.loadbalancer.server.port=PORT
+      # Shows the app on http://home.local (icons: https://dashboardicons.com).
+      - homepage.group=Apps
+      - homepage.name=APPNAME
+      - homepage.icon=APPNAME.png
+      - homepage.href=http://APPNAME.local
+      - homepage.description=What it does
+
+networks:
+  proxy:
+    external: true

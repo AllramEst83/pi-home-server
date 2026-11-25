@@ -1,0 +1,3 @@
+# The Pi's own Docker; apps are found by their homepage.* labels.
+pi:
+  socket: /var/run/docker.sock

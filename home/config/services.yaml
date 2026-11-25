@@ -1,0 +1,8 @@
+# Apps on the Pi come from their Docker labels. Add things here that are not
+# containers on the Pi (the router, other devices), e.g.:
+#
+# - Network:
+#     - Router:
+#         href: http://192.168.0.1
+#         icon: router.png
+[]
